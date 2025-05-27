@@ -4,6 +4,8 @@
 
 A Ruby gem for converting hash structures into command-line argument arrays.
 
+> **Note:** This is *not* a command-line parser — quite the opposite. Argvise helps you **build** CLI commands programmatically.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -15,7 +17,7 @@ gem 'argvise'
 And then execute:
 
 ```bash
-bundle install
+bundler install
 ```
 
 Or install it directly:
