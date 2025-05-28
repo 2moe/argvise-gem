@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'lib/argvise/version'
+
 Gem::Specification.new do |spec|
   spec.name = 'argvise'
-  spec.version = '0.0.0'
+  # spec.version = '0.0.1'
+  spec.version = Argvise::VERSION
   spec.authors = ['2moe']
   spec.email = ["m@tmoe.me"]
 

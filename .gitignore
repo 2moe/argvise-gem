@@ -14,10 +14,11 @@ Thumbs.db:encryptable
 desktop.ini
 
 # white list
-!/.git*
+!/rbi
 !/Gemfile
-!/License
 !/Rakefile
+!/.git*
+!/License
 !/docs
 !/lib
 !/*.gemspec
