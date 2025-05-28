@@ -95,6 +95,8 @@ end
 # 
 # Example：
 #   { v: true, path: '/path/to/dir' }.then(&hash_to_args) # => ["-v", "--path", "/path/to/dir"]
+#
+# sig { returns(T.proc.params(options: Hash).returns(T::Array[String])) }
 def hash_to_args
   ->(options) do
     Argvise.build(options)
