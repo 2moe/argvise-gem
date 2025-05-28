@@ -1,6 +1,6 @@
 # Argvise
 
-[![Gem Version](https://badge.fury.io/rb/argvise.svg?icon=si%3Arubygems)](https://rubygems.org/gems/argvise)   [![RubyDoc](https://img.shields.io/badge/-y?label=rubydoc&color=orange)](https://www.rubydoc.info/gems/argvise)
+[![Gem Version](https://badge.fury.io/rb/argvise.svg?icon=si%3Arubygems)](https://rubygems.org/gems/argvise)
 
 A Ruby gem for converting hash structures into command-line argument arrays.
 
