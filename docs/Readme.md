@@ -60,7 +60,7 @@ Argvise.build(options)
 ### Lambda Shortcut
 
 ```ruby
-{ v: true, dir: '/path/to/dir' }.then(&hash_to_args)
+{ v: true, dir: '/path/to/dir' }.then(&hash_to_argv)
 # => ["-v", "--dir", "/path/to/dir"]
 ```
 
@@ -69,26 +69,26 @@ Argvise.build(options)
 ### 1. Simple Flags
 
 ```ruby
-{ verbose: true }.then(&hash_to_args)  # => ["--verbose"]
+{ verbose: true }.then(&hash_to_argv)  # => ["--verbose"]
 ```
 
 ### 2. Boolean Values
 
 ```ruby
-{ silent: false }.then(&hash_to_args) # => []
+{ silent: false }.then(&hash_to_argv) # => []
 ```
 
 ### 3. Array Values
 
 ```ruby
-{ tag: %w[a b] }.then(&hash_to_args)
+{ tag: %w[a b] }.then(&hash_to_argv)
 # => ["--tag", "a", "--tag", "b"]
 ```
 
 ### 4. Hash Values
 
 ```ruby
-{ label: { env: 'test', k2: 'v2' } }.then(&hash_to_args)
+{ label: { env: 'test', k2: 'v2' } }.then(&hash_to_argv)
 # => ["--label", "env=test", "--label", "k2=v2"]
 ```
 

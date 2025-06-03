@@ -9,4 +9,4 @@ class Argvise
 end
 
 sig { returns(T.proc.params(options: Hash).returns(T::Array[String])) }
-def hash_to_args; end
+def hash_to_argv; end
