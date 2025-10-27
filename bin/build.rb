@@ -8,9 +8,12 @@ Pathname(__dir__ || File.dirname(__FILE__))
   .parent
   .then { Dir.chdir(it) }
 
-project = 'argvise'
+proj = 'argvise'
 
-puts `gem uninstall #{project}`
-puts `gem build #{project}`
-puts `gem install #{project}`
-# gem push argvise-0.0.0.gem
+system <<~CMD
+  gem uninstall #{proj}
+  gem build #{proj}
+  gem install #{proj}
+CMD
+
+# gem push argvise-*.gem
