@@ -6,36 +6,146 @@ A Ruby gem for converting hash structures into command-line argument arrays.
 
 > **Note:** This is *not* a command-line parser — quite the opposite. Argvise helps you **build** CLI commands programmatically.
 
+## Quick Start
+
+```ruby
+# IRB
+system "gem install argvise"
+```
+
+```ruby
+# RUBY
+require 'argvise'
+
+{ cargo: nil, build: nil, v: true, target: "wasm32-wasip2" }
+  .then(&hash_to_argv)
+
+#=> ["cargo", "build", "-v", "--target", "wasm32-wasip2"]
+```
+
+`raw_cmd_hash.then(&hash_to_argv)` is equivalent to:
+
+```ruby
+{ cargo: nil, build: nil, v: true, target: "wasm32-wasip2" }
+  .then(&Argvise.new_proc)
+  .with_bsd_style(false) #=> GNU style
+  .with_kebab_case_flags(true) #=> replace "--cli_flag" with "--cli-flag"
+  .build
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
+# Gemfile
+#
 gem 'argvise'
 ```
 
 And then execute:
 
-```bash
+```sh
+# SHELL
+#
 bundler install
 ```
 
 Or install it directly:
 
-```bash
+```sh
+# SHELL
+#
 gem install argvise
 ```
 
-## Usage
+## Conversion Rules
 
-### Basic Conversion
+### Common
+
+| Hash Format              | Result Example               |
+| ------------------------ | ---------------------------- |
+| `{ key: nil }`           | `["key"]`                    |
+| `{ "-k2": nil }`         | `["-k2"]`                    |
+| `{ "--r_a-nd_om": nil }` | `["--r_a-nd_om"]`            |
+| `{ key: false }`         | `[]`                         |
+| `{ key: [] }`            | `[]`                         |
+| `{ k: true }`            | `["-k"]`                     |
+| `{ k: "value" }`         | `["-k", "value"]`            |
+| `{ k: ["a", "b"] }`      | `["-k", "a", "-k", "b"]`     |
+| `{ k: { a: 1, b: 2 } }`  | `["-k", "a=1", "-k", "b=2"]` |
+
+
+### GNU Style
+
+| Hash Format               | Result Example                     |
+| ------------------------- | ---------------------------------- |
+| `{ key: true }`           | `["--key"]`                        |
+| `{ key: "value" }`        | `["--key", "value"]`               |
+| `{ key: ["a", "b"] }`     | `["--key", "a", "--key", "b"]`     |
+| `{ key: { a: 1, b: 2 } }` | `["--key", "a=1", "--key", "b=2"]` |
+
+---
+
+#### `with_kebab_case_flags(true)`:
+
+| Hash Format       | Result Example |
+| ----------------- | -------------- |
+| `{ key_a: true }` | `["--key-a"]`  |
+
+---
+
+#### `with_kebab_case_flags(false)`:
+
+| Hash Format       | Result Example |
+| ----------------- | -------------- |
+| `{ key_b: true }` | `["--key_b"]`  |
+
+
+### BSD Style
+
+| Hash Format               | Result Example                   |
+| ------------------------- | -------------------------------- |
+| `{ key: true }`           | `["-key"]`                       |
+| `{ key: "value" }`        | `["-key", "value"]`              |
+| `{ key: ["a", "b"] }`     | `["-key", "a", "-key", "b"]`     |
+| `{ key: { a: 1, b: 2 } }` | `["-key", "a=1", "-key", "b=2"]` |
+
+---
+
+#### `with_kebab_case_flags(true)`:
+
+| Hash Format       | Result Example |
+| ----------------- | -------------- |
+| `{ key_c: true }` | `["-key-c"]`   |
+
+---
+
+#### `with_kebab_case_flags(false)`:
+
+| Hash Format       | Result Example |
+| ----------------- | -------------- |
+| `{ key_d: true }` | `["-key_d"]`   |
+
+
+### Notes
+
+> When the value of a flag key is `nil`, the `kebab_case_flags` option has
+> no effect — i.e., the key will not be transformed.
+>
+> For example, the input `{"a_b-c": nil}` will result in `["a_b-c"]`,
+> and **not** be automatically transformed into `["a-b-c"]`.
+
+## Examples
+
+### Basic Conversion (GNU Style)
 
 ```ruby
 require 'argvise'
 
-options = { 
+raw_cmd_hash = {
   docker: nil,  #=> docker
-  build: nil, 
+  build: nil,
   push: true, #=> --push
   tag: ["ghcr.io/[user]/repo:latest", "ghcr.io/[user]/repo:v0.0.1"], #=> --tag ghcr... --tag ghcr..0.0.1
   platform: "wasi/wasm", #=> --platform wasi/wasm
@@ -47,12 +157,12 @@ options = {
   path: nil,
 }
 
-Argvise.build(options)
+Argvise.build(raw_cmd_hash)
 # => [
-#   "docker", "build", "--push", 
-#   "--tag", "ghcr.io/[user]/repo:latest", "--tag", "ghcr.io/[user]/repo:v0.0.1", 
-#   "--platform", "wasi/wasm", 
-#   "--label", "maintainer=user", "--label", "description=A Docker build example", 
+#   "docker", "build", "--push",
+#   "--tag", "ghcr.io/[user]/repo:latest", "--tag", "ghcr.io/[user]/repo:v0.0.1",
+#   "--platform", "wasi/wasm",
+#   "--label", "maintainer=user", "--label", "description=A Docker build example",
 #   "--file", "wasi.dockerfile", "path"
 # ]
 ```
@@ -64,56 +174,113 @@ Argvise.build(options)
 # => ["-v", "--dir", "/path/to/dir"]
 ```
 
-## Supported Data Structures
+### Configurable builder
 
-### 1. Simple Flags
-
-```ruby
-{ verbose: true }.then(&hash_to_argv)  # => ["--verbose"]
-```
-
-### 2. Boolean Values
+> Required
+>   - argvise: >= v0.0.4
+>   - ruby: >= v3.1.0
 
 ```ruby
-{ silent: false }.then(&hash_to_argv) # => []
+raw_cmd = {
+  compiler: nil,
+  build: nil,
+  pack_type: 'tar+zstd',
+  push: true,
+  v: true,
+  f: 'p2',
+  tag: ['v0.0.1', 'beta'],
+  platform: 'wasi/wasm',
+  label: {
+    maintainer: 'user',
+    description: 'Demo'
+  },
+  "/path/to/dir": nil
+}
+
+p '----------------'
+p "GNU-style + kebab case flags=false"
+raw_cmd
+  .then(&Argvise.new_proc)
+  .with_bsd_style(false)
+  .with_kebab_case_flags(false)
+  .build
+  .display
+
+#=> ["compiler", "build", "--pack_type", "tar+zstd", "--push", "-v", "-f", "p2", "--tag", "v0.0.1", "--tag", "beta", "--platform", "wasi/wasm", "--label", "maintainer=user", "--label", "description=Demo", "/path/to/dir"]
+
+p '----------------'
+p 'GNU-style + kebab-case-flags=true'
+raw_cmd
+  .then(&hash_to_argv)
+  .display
+
+#=> ["compiler", "build", "--pack-type", "tar+zstd", "--push", "-v", "-f", "p2", "--tag", "v0.0.1", "--tag", "beta", "--platform", "wasi/wasm", "--label", "maintainer=user", "--label", "description=Demo", "/path/to/dir"]
+
+p '----------------'
+p 'BSD-style + kebab-case-flags=true'
+raw_cmd
+  .then(&Argvise.new_proc)
+  .with_bsd_style
+  .with_kebab_case_flags
+  .build
+  .display
+
+#=> ["compiler", "build", "-pack-type", "tar+zstd", "-push", "-v", "-f", "p2", "-tag", "v0.0.1", "-tag", "beta", "-platform", "wasi/wasm", "-label", "maintainer=user", "-label", "description=Demo", "/path/to/dir"]
 ```
 
-### 3. Array Values
+## Data Type
 
-```ruby
-{ tag: %w[a b] }.then(&hash_to_argv)
-# => ["--tag", "a", "--tag", "b"]
-```
+### Boolean
 
-### 4. Hash Values
+#### GNU style
 
-```ruby
-{ label: { env: 'test', k2: 'v2' } }.then(&hash_to_argv)
-# => ["--label", "env=test", "--label", "k2=v2"]
-```
+- `{ verbose: true }` => "--verbose"
+- `{ v: true }` => "-v"
+- `{ v: false }` => no argument generated
 
-## API Documentation
+#### BSD style
 
-### `Argvise.build(options)`
+- `{ verbose: true }` => "-verbose"
+- `{ v: true }` => "-v"
+- `{ v: false }` => no argument generated
 
-Main method to convert hash to command-line arguments array
+### String
 
-**Parameters:**
+#### GNU style
 
-- `options` (Hash) - The hash to be converted
+- `{ f: "a.txt" }` => `["-f", "a.txt"]`
+- `{ file: "a.txt" }` => `["--file", "a.txt"]`
 
-**Returns:**
+#### BSD style
 
-- Array<String> generated command-line arguments
+- `{ f: "a.txt" }` => `["-f", "a.txt"]`
+- `{ file: "a.txt" }` => `["-file", "a.txt"]`
 
-### Conversion Rules
+### Array
 
-| Hash Format               | Result Example                     |
-| ------------------------- | ---------------------------------- |
-| `{ key: nil }`            | `["key"]`                          |
-| `{ key: false }`          | `[]`                               |
-| `{ key: true }`           | `["--key"]`                        |
-| `{ k: true }`             | `["-k"]`                           |
-| `{ key: "value" }`        | `["--key", "value"]`               |
-| `{ key: ["a", "b"] }`     | `["--key", "a", "--key", "b"]`     |
-| `{ key: { a: 1, b: 2 } }` | `["--key", "a=1", "--key", "b=2"]` |
+#### GNU style
+
+- `{ t: ["a", "b"] }` => `["-t", "a", "-t", "b"]`
+- `{ tag: %w[a b] }` => `["--tag", "a", "--tag", "b"]`
+
+#### BSD style
+
+- `{ t: ["a", "b"] }` => `["-t", "a", "-t", "b"]`
+- `{ tag: %w[a b] }` => `["-tag", "a", "-tag", "b"]`
+
+### Hash
+
+#### GNU style
+
+- `{ e: { profile: 'test', lang: 'C'} }` => `["-e", "profile=test", "-e", "lang=C"]`
+- `{ env: { profile: 'test', lang: 'C'} }` => `["--env", "profile=test", "--env", "lang=C"]`
+
+#### BSD style
+
+- `{ e: { profile: 'test', lang: 'C'} }` => `["-e", "profile=test", "-e", "lang=C"]`
+- `{ env: { profile: 'test', lang: 'C'} }` => `["-env", "profile=test", "-env", "lang=C"]`
+
+## Nil => Raw
+
+- `{ cargo: nil, b: nil}` => `["cargo", "b"]`
+- `{ "-fv": nil}` => `["-fv"]`

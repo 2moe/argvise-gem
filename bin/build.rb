@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# typed: ignore
+# frozen_string_literal: true
 
 require 'pathname'
 

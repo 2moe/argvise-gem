@@ -12,10 +12,11 @@ tmp.d*
 Thumbs.db
 Thumbs.db:encryptable
 desktop.ini
+bin/srb*
 
 # white list
 !/rbi
-!/Gemfile
+# !/Gemfile
 !/Rakefile
 !/.git*
 !/License
@@ -25,3 +26,4 @@ desktop.ini
 !/test
 !/bin
 !/assets
+!/.rubocop.yml

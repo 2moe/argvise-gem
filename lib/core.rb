@@ -1,32 +1,149 @@
+# rubocop:disable Style/Lambda, Lint/MissingCopEnableDirective
+# typed: true
 # frozen_string_literal: true
 
-# rubocop:disable Style/Lambda, Lint/MissingCopEnableDirective
 # ------------------
 # Converts hash to command array
 #
-# Example
-#   {cargo: nil, build: nil, v: true, target: "wasm32-wasip2"}.then { Argvise.build _1 }
-#   # Output => ["cargo", "build", "-v", "--target", "wasm32-wasip2"]
+# == Example
 #
-# Supported data structures:
-# - Simple flags: `{ verbose: true }` => "--verbose"
-# - Boolean values: `{ v: false }` => no argument generated
-# - Array values: `{ tag: %w[a b] }` => `["--tag", "a", "--tag", "b"]`
-# - Hash values: `{ label: { env: 'test' } }` => `["--label", "env=test"]`
+#   { cargo: nil, build: nil, v: true, target: "wasm32-wasip2" }
+#     .then(&Argvise.new_proc)
+#     .with_bsd_style(false)
+#     .build
+#     .display
+#
+#   #=> ["cargo", "build", "-v", "--target", "wasm32-wasip2"]
+#
+# == Conversion Rules:
+#
+# === GNU Style:
+#   - Boolean values:
+#     - `{ verbose: true }` => "--verbose"
+#     - `{ v: true }` => "-v"
+#     - `{ v: false }` => no argument generated
+#   - String values:
+#     - `{ f: "a.txt" }` => ["-f", "a.txt"]
+#     - `{ file: "a.txt" }` => ["--file", "a.txt"]
+#   - Array values:
+#     - `{ t: ["a", "b"] }` => `["-t", "a", "-t", "b"]`
+#     - `{ tag: %w[a b] }` => `["--tag", "a", "--tag", "b"]`
+#   - Hash values:
+#     - `{ L: { env: 'test' } }` => `["-L", "env=test"]`
+#     - `{ label: { env: 'test' } }` => `["--label", "env=test"]`
+#
+# === BSD Style:
+#   - Boolean values:
+#     - `{ verbose: true }` => "-verbose"
+#     - `{ v: true }` => "-v"
+#     - `{ v: false }` => no argument generated
+#   - String values:
+#     - `{ f: "a.txt" }` => ["-f", "a.txt"]
+#     - `{ file: "a.txt" }` => ["-file", "a.txt"]
+#   - Array values:
+#     - `{ t: ["a", "b"] }` => `["-t", "a", "-t", "b"]`
+#     - `{ tag: %w[a b] }` => `["-tag", "a", "-tag", "b"]`
+#   - Hash values:
+#     - `{ L: { env: 'test' } }` => `["-L", "env=test"]`
+#     - `{ label: { env: 'test' } }` => `["-label", "env=test"]`
+#
+# === Common:
+#   - Raw values:
+#   - `{ cargo: nil, b: nil}` => `["cargo", "b"]`
+#   - `{ "-fv": nil}` => `["-fv"]`
+#
+# === About kebab_case_flags:
+#   - `with_kebab_case_flags(true)`:
+#     - `{enable_jit: true}` =>
+#         - GNU-style: `["--enable-jit"]`
+#         - BSD-style: `["-enable-jit"]`
+#   - `with_kebab_case_flags(false)`:
+#     - `{enable_jit: true}` =>
+#         - GNU-style: `["--enable_jit"]`
+#         - BSD-style: `["-enable_jit"]`
 class Argvise
-  # Converts a hash into a command-line argument array
-  #
-  # @param options [Hash] The hash to be converted
-  # @return [Array<String>] The generated array of command-line arguments
-  #
-  # sig { params(options: Hash).returns(T::Array[String]) }
-  def self.build(options)
-    new.build(options)
+  attr_accessor :bsd_style, :kebab_case_flags
+
+  # v0.0.3 default options
+  DEFAULT_OPTS = { bsd_style: false, kebab_case_flags: true }.freeze
+
+  class << self
+    # Converts a hash into a command-line argument array
+    #
+    # == Example
+    #   require 'argvise'
+    #   cmd = { ruby: nil, r: "argvise", verbose: true, e: true, "puts Argvise::VERSION": nil }
+    #   opts = { bsd_style: false }
+    #   Argvise.build(cmd, opts:)
+    #
+    # == Params
+    #   - raw_cmd_hash [Hash] The hash to be converted (i.e., raw input data)
+    #   - opts [Hash] See also: [self.new]
+    #
+    # == Returns
+    #   [Array<String>] The generated array of command-line arguments
+    def build(
+      raw_cmd_hash,
+      opts: nil
+    )
+      opts ||= DEFAULT_OPTS
+      new(raw_cmd_hash, opts:).build
+    end
+
+    def new_proc
+      ->(raw_cmd_hash) do
+        new(raw_cmd_hash)
+      end
+    end
+    # ----
   end
 
-  def build(options)
-    # options.each_pair.flat_map { |k, v| process_pair(k.to_s, v) }
-    options.each_with_object([]) do |(k, v), memo|
+  # == Example
+  #   require 'argvise'
+  #   cmd = { ruby: nil, r: "argvise", verbose: true, e: true, "puts Argvise::VERSION": nil }
+  #   opts = Argvise::DEFAULT_OPTS
+  #   Argvise.new(cmd, opts:)
+  #
+  # == opts
+  #   [Hash]: { bsd_style: Boolean, kebab_case_flags: Boolean }
+  #
+  # - When `bsd_style` is set to `false`, the builder operates in **GNU-style mode**,
+  #   which typically uses hyphenated flags.
+  #
+  # - If `kebab_case_flags` is set to `true`, any underscores (`_`) in flag names
+  #   will be automatically converted to hyphens (`-`).
+  #   - For example, a flag like `--enable_jit` will be transformed into `--enable-jit`.
+  #
+  # > When the value of a flag key is `nil`, the `kebab_case_flags` option has
+  # > no effect — i.e., the key will not be transformed.
+  # >
+  # > For example, the input `{"a_b-c": nil}` will result in `["a_b-c"]`,
+  # > and **not** be automatically transformed into `["a-b-c"]`.
+  #
+  def initialize(
+    raw_cmd_hash,
+    opts: nil
+  )
+    opts = DEFAULT_OPTS.merge(opts || {})
+
+    @raw_cmd_hash = raw_cmd_hash
+    @bsd_style = opts[:bsd_style]
+    @kebab_case_flags = opts[:kebab_case_flags]
+  end
+
+  def with_bsd_style(value = true) # rubocop:disable Style/OptionalBooleanParameter
+    @bsd_style = value
+    self
+  end
+
+  def with_kebab_case_flags(value = true) # rubocop:disable Style/OptionalBooleanParameter
+    @kebab_case_flags = value
+    self
+  end
+
+  def build
+    # @raw_cmd_hash.each_pair.flat_map { |k, v| process_pair(k.to_s, v) }
+    @raw_cmd_hash.each_with_object([]) do |(k, v), memo|
       memo.concat(process_pair(k.to_s, v))
     end
   end
@@ -44,13 +161,42 @@ class Argvise
     generate_args(flag, value)
   end
 
-  # Builds the command-line flag prefix (automatically detects short or long options)
+  # Builds the command-line flag prefix (automatically detects short or long raw_cmd_hash)
   #
-  # short key, e.g., {v: true} => "-v"
-  # long key, e.g., {verbose: true} => "--verbose"
-  def build_flag(key)
-    prefix = key.length == 1 ? '-' : '--'
-    "#{prefix}#{key.tr('_', '-')}"
+  # GNU Style:
+  #  - short key, e.g., {v: true} => "-v"
+  #  - long key, e.g., {verbose: true} => "--verbose"
+  #
+  # BSD Style:
+  #  - short key, e.g., {verbose: true} => "-verbose"
+  #  - no long key
+  #
+  # @kebab_case_flags==true:
+  #  - "_" => "-"
+  #  - e.g., {enable_jit: true} =>
+  #    - BSD-style: "-enable-jit"
+  #    - GNU-style: "--enable-jit"
+  #
+  # @kebab_case_flags==false:
+  #  - e.g., {enable_jit: true} =>
+  #    - BSD-style: "-enable_jit"
+  #    - GNU-style: "--enable_jit"
+  def build_flag(key) # rubocop:disable Metrics/MethodLength
+    prefix =
+      if @bsd_style
+        '-'
+      else
+        key.length == 1 ? '-' : '--'
+      end
+
+    flag =
+      if @kebab_case_flags
+        key.tr('_', '-')
+      else
+        key
+      end
+
+    "#{prefix}#{flag}"
   end
 
   # Generates the corresponding argument array based on the value type
@@ -95,12 +241,21 @@ end
 
 # A convenient lambda method: converts a hash into command-line arguments
 #
-# Example：
-#   { v: true, path: '/path/to/dir' }.then(&hash_to_argv) # => ["-v", "--path", "/path/to/dir"]
+# == Example：
+#   { v: true, path: '/path/to/dir' }.then(&hash_to_argv)
+#   #=> ["-v", "--path", "/path/to/dir"]
 #
-# sig { returns(T.proc.params(options: Hash).returns(T::Array[String])) }
+# == raw_cmd_hash.then(&hash_to_argv) is equivalent to:
+#
+#  raw_cmd_hash
+#    .then(&Argvise.new_proc)
+#    .with_bsd_style(false)
+#    .with_kebab_case_flags(true)
+#    .build
+#
+# sig { returns(T.proc.params(raw_cmd_hash: Hash).returns(T::Array[String])) }
 def hash_to_argv
-  ->(options) do
-    Argvise.build(options)
+  ->(raw_cmd_hash) do
+    Argvise.build(raw_cmd_hash)
   end
 end

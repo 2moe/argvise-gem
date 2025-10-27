@@ -7,13 +7,13 @@ Gem::Specification.new do |spec|
   # spec.version = '0.0.1'
   spec.version = Argvise::VERSION
   spec.authors = ['2moe']
-  spec.email = ["m@tmoe.me"]
+  spec.email = ['m@tmoe.me']
 
   spec.summary = 'Turns a hash into CLI arguments'
   spec.description = 'Provides flexible command-line argument generation with support for complex data structures'
   spec.license = 'Apache-2.0'
   # spec.extra_rdoc_files = ['docs/rdoc/Readme.rdoc']
-  spec.required_ruby_version = '>= 3.0.0'
+  spec.required_ruby_version = '>= 3.1.0'
   # spec.metadata['allowed_push_host'] = "TODO: Set to your gem server 'https://example.com'"
 
   spec.homepage = 'https://github.com/2moe/argvise-gem'
@@ -27,7 +27,12 @@ Gem::Specification.new do |spec|
   spec.files = IO.popen(%w[git ls-files -z], chdir: __dir__, err: IO::NULL) do |ls|
     ls.readlines("\x0", chomp: true).reject do |f|
       (f == gemspec) ||
-        f.start_with?(*%w[bin/ test/ spec/ features/ .git .github appveyor Gemfile Rakefile assets docs/Readme-zh-])
+        f.start_with?(
+          # bin/ test/ Gemfile Rakefile assets docs/Readme-zh-
+          *%w[
+            spec/ features/ .git .github appveyor
+          ]
+        )
     end
   end
   # spec.bindir = 'exe'
