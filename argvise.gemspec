@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['2moe']
   spec.email = ['m@tmoe.me']
 
-  spec.summary = 'Turns a hash into CLI arguments'
+  spec.summary = 'Converts a hash into CLI arguments [Array]'
   spec.description = 'Provides flexible command-line argument generation with support for complex data structures'
   spec.license = 'Apache-2.0'
   # spec.extra_rdoc_files = ['docs/rdoc/Readme.rdoc']

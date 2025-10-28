@@ -27,3 +27,4 @@ bin/srb*
 !/bin
 !/assets
 !/.rubocop.yml
+!/mruby
