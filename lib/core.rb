@@ -90,6 +90,19 @@ class Argvise
       new(raw_cmd_hash, opts:).build
     end
 
+    # Returns a Proc that wraps `Argvise.new`, allowing functional-style chaining.
+    #
+    # Useful for transforming a hash of CLI arguments into a command array.
+    #
+    # == Example
+    #
+    #   require 'argvise'
+    #   { ruby: nil, r: "argvise", e: true, "puts Argvise::VERSION": nil }
+    #     .then(&Argvise.new_proc)
+    #     .build
+    #     .then{system *_1}
+    #
+    # > See also: [self.new]
     def new_proc
       ->(raw_cmd_hash) do
         new(raw_cmd_hash)
@@ -99,10 +112,11 @@ class Argvise
   end
 
   # == Example
+  #
   #   require 'argvise'
   #   cmd = { ruby: nil, r: "argvise", verbose: true, e: true, "puts Argvise::VERSION": nil }
   #   opts = Argvise::DEFAULT_OPTS
-  #   Argvise.new(cmd, opts:)
+  #   Argvise.new(cmd, opts:).build.then{system *_1}
   #
   # == opts
   #   [Hash]: { bsd_style: Boolean, kebab_case_flags: Boolean }
@@ -114,11 +128,11 @@ class Argvise
   #   will be automatically converted to hyphens (`-`).
   #   - For example, a flag like `--enable_jit` will be transformed into `--enable-jit`.
   #
-  # > When the value of a flag key is `nil`, the `kebab_case_flags` option has
-  # > no effect — i.e., the key will not be transformed.
-  # >
-  # > For example, the input `{"a_b-c": nil}` will result in `["a_b-c"]`,
-  # > and **not** be automatically transformed into `["a-b-c"]`.
+  # When the value of a flag key is `nil`, the `kebab_case_flags` option has no effect
+  # — i.e., the key will not be transformed.
+  #
+  # For example, the input `{"a_b-c": nil}` will result in `["a_b-c"]`,
+  # and **not** be automatically transformed into `["a-b-c"]`.
   #
   def initialize(
     raw_cmd_hash,
