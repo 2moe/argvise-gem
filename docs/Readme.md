@@ -63,7 +63,7 @@ gem install argvise
 
 ### Common
 
-| Hash Format             | Result Example               |
+| Hash Format             | Result                       |
 | ----------------------- | ---------------------------- |
 | `{ "-k2": nil }`        | `["-k2"]`                    |
 | `{ "--r_a-w_": nil }`   | `["--r_a-w_"]`               |
@@ -79,7 +79,7 @@ gem install argvise
 
 ### GNU Style
 
-| Hash Format               | Result Example                     |
+| Hash Format               | Result                             |
 | ------------------------- | ---------------------------------- |
 | `{ key: true }`           | `["--key"]`                        |
 | `{ key: "value" }`        | `["--key", "value"]`               |
@@ -90,22 +90,22 @@ gem install argvise
 
 #### `with_kebab_case_flags(true)`:
 
-| Hash Format       | Result Example |
-| ----------------- | -------------- |
-| `{ key_a: true }` | `["--key-a"]`  |
+| Hash Format       | Result        |
+| ----------------- | ------------- |
+| `{ key_a: true }` | `["--key-a"]` |
 
 ---
 
 #### `with_kebab_case_flags(false)`:
 
-| Hash Format       | Result Example |
-| ----------------- | -------------- |
-| `{ key_b: true }` | `["--key_b"]`  |
+| Hash Format       | Result        |
+| ----------------- | ------------- |
+| `{ key_b: true }` | `["--key_b"]` |
 
 
 ### BSD Style
 
-| Hash Format               | Result Example                   |
+| Hash Format               | Result                           |
 | ------------------------- | -------------------------------- |
 | `{ key: true }`           | `["-key"]`                       |
 | `{ key: "value" }`        | `["-key", "value"]`              |
@@ -116,17 +116,17 @@ gem install argvise
 
 #### `with_kebab_case_flags(true)`:
 
-| Hash Format       | Result Example |
-| ----------------- | -------------- |
-| `{ key_c: true }` | `["-key-c"]`   |
+| Hash Format       | Result       |
+| ----------------- | ------------ |
+| `{ key_c: true }` | `["-key-c"]` |
 
 ---
 
 #### `with_kebab_case_flags(false)`:
 
-| Hash Format       | Result Example |
-| ----------------- | -------------- |
-| `{ key_d: true }` | `["-key_d"]`   |
+| Hash Format       | Result       |
+| ----------------- | ------------ |
+| `{ key_d: true }` | `["-key_d"]` |
 
 
 ### Notes
