@@ -28,7 +28,7 @@ end
 {tag: %w[v0 beta]}.then(&hash_to_argv)
 #=> ["--tag", "v0", "--tag", "beta"]
 
-Argvise.singleton_methods(false)
+Argvise.methods(false)
 #=> [:new_proc, :build]
 
 Argvise.instance_methods(false)

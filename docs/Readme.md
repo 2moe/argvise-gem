@@ -37,6 +37,8 @@ require 'argvise'
 
 ## Installation
 
+### Ruby MRI
+
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -60,6 +62,10 @@ Or install it directly:
 #
 gem install argvise
 ```
+
+### mruby
+
+[More details](../mruby/Readme.md)
 
 ## Conversion Rules
 
