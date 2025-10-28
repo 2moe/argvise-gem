@@ -7,13 +7,13 @@
 #
 # == Example
 #
-#   { cargo: nil, build: nil, v: true, target: "wasm32-wasip2" }
+#   { cargo: nil, b: nil, r: true, target: "wasm32-wasip2" }
 #     .then(&Argvise.new_proc)
 #     .with_bsd_style(false)
 #     .build
 #     .display
 #
-#   #=> ["cargo", "build", "-v", "--target", "wasm32-wasip2"]
+#   #=> ["cargo", "b", "-r", "--target", "wasm32-wasip2"]
 #
 # == Conversion Rules:
 #

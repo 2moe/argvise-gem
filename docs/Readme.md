@@ -17,16 +17,16 @@ system "gem install argvise"
 # RUBY
 require 'argvise'
 
-{ cargo: nil, build: nil, v: true, target: "wasm32-wasip2" }
+{ cargo: nil, b: nil, r: true, target: "wasm32-wasip2" }
   .then(&hash_to_argv)
 
-#=> ["cargo", "build", "-v", "--target", "wasm32-wasip2"]
+#=> ["cargo", "b", "-r", "--target", "wasm32-wasip2"]
 ```
 
 `raw_cmd_hash.then(&hash_to_argv)` is equivalent to:
 
 ```ruby
-{ cargo: nil, build: nil, v: true, target: "wasm32-wasip2" }
+{ cargo: nil, b: nil, r: true, target: "wasm32-wasip2" }
   .then(&Argvise.new_proc)
   .with_bsd_style(false) #=> GNU style
   .with_kebab_case_flags(true) #=> replace "--cli_flag" with "--cli-flag"
