@@ -34,9 +34,8 @@ output_file = target_dir.join 'argvise.tgz'
 target_dir.mkpath
 
 warn "Downloading ..."
-URI.open url do |response|
-  response.read.then { output_file.binwrite _1 }
-end
+URI.open(url)
+  .then { IO.copy_steam(_1, output_file) }
 
 Dir.chdir target_dir do |_|
   p `tar -xf #{output_file.basename.to_s}`
