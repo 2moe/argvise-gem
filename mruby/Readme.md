@@ -49,7 +49,9 @@ Dir.chdir target_dir do |_|
 end
 ```
 
-2 modify your build conf
+<!-- markdownlint-disable MD029 -->
+
+2. modify your build conf
 
 ```ruby
 # [MRUBY_DIR]/build_config/default.rb
