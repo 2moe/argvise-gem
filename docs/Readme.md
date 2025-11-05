@@ -306,7 +306,7 @@ raw_cmd
 
 Breaking Changes:
 
-- `|> hash_to_argv` => `Hash.to_argv(opts)`
+- `cmd_hash |> hash_to_argv` => `cmd_hash.to_argv(opts)`
   - i.e.,
     - old: `{a: true}.then(&hash_to_argv)`
     - new: `{a: true}.to_argv`
