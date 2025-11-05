@@ -191,7 +191,7 @@ Argvise.build(raw_cmd_hash)
 ### Configurable builder
 
 > Required
->   - argvise: >= v0.0.4
+>   - argvise: >= v0.0.6
 >   - ruby: >= v3.1.0
 
 ```ruby
