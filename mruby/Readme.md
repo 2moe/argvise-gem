@@ -6,6 +6,8 @@
 
 To include the argvise gem in your mruby build, modify your build configuration file:
 
+<!-- todo: update checksum_hash -->
+
 ```ruby
 # [MRUBY_DIR]/build_config/default.rb
 #
@@ -27,8 +29,9 @@ require 'open-uri'
 require 'fileutils'
 require 'pathname'
 
-git_ref = '525f2b7edb1feb5e9eada7606b5480bcc8d988c0'
-url = "https://github.com/2moe/argvise-gem/archive/#{git_ref}.tar.gz"
+git_tag = 'v0.0.6'
+url = "https://github.com/2moe/argvise-gem/archive/refs/tags/#{git_tag}.tar.gz"
+
 target_dir = Pathname 'build/tmp/argvise'
 output_file = target_dir.join 'argvise.tgz'
 target_dir.mkpath
@@ -39,7 +42,7 @@ URI.open(url)
 
 Dir.chdir target_dir do |_|
   p `tar -xf #{output_file.basename.to_s}`
-  File.rename "argvise-gem-#{git_ref}", 'gem'
+  File.rename "argvise-gem-#{git_tag.delete_prefix('v')}", 'gem'
   Dir.chdir 'gem/mruby'
 
   file = 'mrblib/argvise.rb'
@@ -73,7 +76,7 @@ end
 2. **try running**
 
 ```ruby
-{tag: %w[v0 beta]}.then(&hash_to_argv)
+{tag: %w[v0 beta]}.to_argv
 #=> ["--tag", "v0", "--tag", "beta"]
 
 Argvise.methods(false)

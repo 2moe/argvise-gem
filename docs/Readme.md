@@ -19,16 +19,21 @@ system "gem install argvise"
 # RUBY
 require 'argvise'
 
-{ cargo: nil, b: nil, r: true, target: "wasm32-wasip2" }
-  .then(&hash_to_argv)
+raw_cmd_hash = {
+  cargo: nil, b: nil, r: true, target: "wasm32-wasip2"
+}
+
+raw_cmd_hash
+  .to_argv
+  # .to_argv({bsd_style: false, kebab_case_flags: true})
 
 #=> ["cargo", "b", "-r", "--target", "wasm32-wasip2"]
 ```
 
-`raw_cmd_hash.then(&hash_to_argv)` is equivalent to:
+`raw_cmd_hash.to_argv` is equivalent to:
 
 ```ruby
-{ cargo: nil, b: nil, r: true, target: "wasm32-wasip2" }
+raw_cmd_hash
   .then(&Argvise.new_proc)
   .with_bsd_style(false) #=> GNU style
   .with_kebab_case_flags(true) #=> replace "--cli_flag" with "--cli-flag"
@@ -179,7 +184,7 @@ Argvise.build(raw_cmd_hash)
 ### Lambda Shortcut
 
 ```ruby
-{ v: true, dir: '/path/to/dir' }.then(&hash_to_argv)
+{ v: true, dir: '/path/to/dir' }.to_argv
 # => ["-v", "--dir", "/path/to/dir"]
 ```
 
@@ -220,7 +225,7 @@ raw_cmd
 p '----------------'
 p 'GNU-style + kebab-case-flags=true'
 raw_cmd
-  .then(&hash_to_argv)
+  .to_argv
   .display
 
 #=> ["compiler", "build", "--pack-type", "tar+zstd", "--push", "-v", "-f", "p2", "--tag", "v0.0.1", "--tag", "beta", "--platform", "wasi/wasm", "--label", "maintainer=user", "--label", "description=Demo", "/path/to/dir"]
@@ -293,3 +298,15 @@ raw_cmd
 
 - `{ cargo: nil, b: nil}` => `["cargo", "b"]`
 - `{ "-fv": nil}` => `["-fv"]`
+
+
+## Changelog
+
+### v0.0.6 (2025-11-05)
+
+Breaking Changes:
+
+- `.hash_to_argv` => `Hash.to_argv(opts)`
+  - i.e.,
+    - old: `{a: true}.then(&hash_to_argv)`
+    - new: `{a: true}.to_argv`

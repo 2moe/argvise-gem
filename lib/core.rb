@@ -253,23 +253,30 @@ class Argvise
   end
 end
 
-# A convenient lambda method: converts a hash into command-line arguments
-#
-# == Example：
-#   { v: true, path: '/path/to/dir' }.then(&hash_to_argv)
-#   #=> ["-v", "--path", "/path/to/dir"]
-#
-# == raw_cmd_hash.then(&hash_to_argv) is equivalent to:
-#
-#  raw_cmd_hash
-#    .then(&Argvise.new_proc)
-#    .with_bsd_style(false)
-#    .with_kebab_case_flags(true)
-#    .build
-#
-# sig { returns(T.proc.params(raw_cmd_hash: Hash).returns(T::Array[String])) }
-def hash_to_argv
-  ->(raw_cmd_hash) do
-    Argvise.build(raw_cmd_hash)
+class ::Hash # rubocop:disable Style/Documentation
+  # A convenient lambda method: converts a hash into command-line arguments
+  #
+  # == Example：
+  #
+  #   { v: true, path: '/path/to/dir' }.to_argv
+  #   #=> ["-v", "--path", "/path/to/dir"]
+  #
+  # == params:
+  #
+  # - opts: See also [Argvise::new]
+  #
+  # == raw_cmd_hash.to_argv is equivalent to:
+  #
+  #  raw_cmd_hash
+  #    .then(&Argvise.new_proc)
+  #    .with_bsd_style(false)
+  #    .with_kebab_case_flags(true)
+  #    .build
+  #
+  # ---
+  #
+  # sig { params(opts: T.nilable(Hash)).returns(T::Array[String]) }
+  def to_argv(opts = nil)
+    Argvise.build(self, opts: opts)
   end
 end

@@ -21,15 +21,17 @@ class Argvise
   end
   def initialize(raw_cmd_hash, opts: nil); end
 
-  sig { params(value: T::Boolean).returns(self) }
+  sig { params(value: T::Boolean).returns(T.self_type) }
   def with_bsd_style(value = true); end # rubocop:disable Style/OptionalBooleanParameter
 
-  sig { params(value: T::Boolean).returns(self) }
+  sig { params(value: T::Boolean).returns(T.self_type) }
   def with_kebab_case_flags(value = true); end # rubocop:disable Style/OptionalBooleanParameter
 
   sig { returns(T::Array[String]) }
   def build; end
 end
 
-sig { returns(T.proc.params(raw_cmd_hash: T::Hash[T.any(Symbol, String), T.untyped]).returns(T::Array[String])) }
-def hash_to_argv; end
+class ::Hash
+  sig { params(opts: T.nilable(Hash)).returns(T::Array[String]) }
+  def to_argv(opts = nil); end
+end

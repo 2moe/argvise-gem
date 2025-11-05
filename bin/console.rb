@@ -1,9 +1,12 @@
 #!/usr/bin/env ruby
+# typed: ignore
 # frozen_string_literal: true
 
 # lib_path = File.expand_path('../lib', __dir__)
 # exec "irb -I #{lib_path} -r argvise"
 
+# require "bundler/setup"
+# require "argvise"
 require 'irb'
 require_relative '../lib/argvise'
 
@@ -43,7 +46,7 @@ puts_division_line
 
 puts 'GNU-style + kebab_case_flags(true)'
 raw_cmd
-  .then(&hash_to_argv)
+  .to_argv
   .display
 
 puts_division_line
