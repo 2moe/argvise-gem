@@ -6,14 +6,12 @@
 
 To include the argvise gem in your mruby build, modify your build configuration file:
 
-<!-- todo: update checksum_hash -->
-
 ```ruby
 # [MRUBY_DIR]/build_config/default.rb
 #
 MRuby::Build.new do |conf|
   # ...
-  conf.gem github: '2moe/argvise-gem', branch: 'main', path: 'mruby', checksum_hash: 'c6be78fa86a7b19abbfb647cb7c2152a62e78ffd'
+  conf.gem github: '2moe/argvise-gem', branch: 'main', path: 'mruby', checksum_hash: '934b73f8c1e4acde1c82917c3dc612e959a41d3b'
   # ...
 end
 ```
