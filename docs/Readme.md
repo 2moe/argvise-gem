@@ -181,7 +181,7 @@ Argvise.build(raw_cmd_hash)
 # ]
 ```
 
-### Lambda Shortcut
+### Shortcut
 
 ```ruby
 { v: true, dir: '/path/to/dir' }.to_argv
@@ -214,6 +214,7 @@ raw_cmd = {
 
 p '----------------'
 p "GNU-style + kebab case flags=false"
+# argvise: >= v0.0.4
 raw_cmd
   .then(&Argvise.new_proc)
   .with_bsd_style(false)
@@ -225,6 +226,7 @@ raw_cmd
 
 p '----------------'
 p 'GNU-style + kebab-case-flags=true'
+# argvise: >= v0.0.6
 raw_cmd
   .to_argv
   .display
@@ -233,6 +235,7 @@ raw_cmd
 
 p '----------------'
 p 'BSD-style + kebab-case-flags=true'
+# argvise: >= v0.0.4
 raw_cmd
   .then(&Argvise.new_proc)
   .with_bsd_style
