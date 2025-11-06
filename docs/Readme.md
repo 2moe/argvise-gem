@@ -20,7 +20,7 @@ system "gem install argvise"
 require 'argvise'
 
 raw_cmd_hash = {
-  cargo: nil, b: nil, r: true, target: "wasm32-wasip2"
+  cargo: (), b: (), r: true, target: "wasm32-wasip2"
 }
 
 raw_cmd_hash
@@ -81,6 +81,7 @@ gem install argvise
 | `{ "-k2": nil }`        | `["-k2"]`                    |
 | `{ "--r_a-w_": nil }`   | `["--r_a-w_"]`               |
 | `{ key: nil }`          | `["key"]`                    |
+| `{ key: () }`           | `["key"]`                    |
 | `{ key: [] }`           | `[]`                         |
 | `{ key: {} }`           | `[]`                         |
 | `{ key: false }`        | `[]`                         |
@@ -88,7 +89,6 @@ gem install argvise
 | `{ k: "value" }`        | `["-k", "value"]`            |
 | `{ k: ["a", "b"] }`     | `["-k", "a", "-k", "b"]`     |
 | `{ k: { a: 1, b: 2 } }` | `["-k", "a=1", "-k", "b=2"]` |
-
 
 ### GNU Style
 
@@ -101,7 +101,7 @@ gem install argvise
 
 ---
 
-#### `with_kebab_case_flags(true)`:
+#### `with_kebab_case_flags(true)`
 
 | Hash Format       | Result        |
 | ----------------- | ------------- |
@@ -109,12 +109,11 @@ gem install argvise
 
 ---
 
-#### `with_kebab_case_flags(false)`:
+#### `with_kebab_case_flags(false)`
 
 | Hash Format       | Result        |
 | ----------------- | ------------- |
 | `{ key_b: true }` | `["--key_b"]` |
-
 
 ### BSD Style
 
@@ -127,7 +126,9 @@ gem install argvise
 
 ---
 
-#### `with_kebab_case_flags(true)`:
+<!-- markdownlint-disable MD024 no-duplicate-heading -->
+
+#### `with_kebab_case_flags(true)`
 
 | Hash Format       | Result       |
 | ----------------- | ------------ |
@@ -135,12 +136,11 @@ gem install argvise
 
 ---
 
-#### `with_kebab_case_flags(false)`:
+#### `with_kebab_case_flags(false)`
 
 | Hash Format       | Result       |
 | ----------------- | ------------ |
 | `{ key_d: true }` | `["-key_d"]` |
-
 
 ### Notes
 
@@ -191,13 +191,14 @@ Argvise.build(raw_cmd_hash)
 ### Configurable builder
 
 > Required
->   - argvise: >= v0.0.6
->   - ruby: >= v3.1.0
+>
+> - argvise: >= v0.0.6
+> - ruby: >= v3.1.0
 
 ```ruby
 raw_cmd = {
-  compiler: nil,
-  build: nil,
+  compiler: (),
+  build: (),
   pack_type: 'tar+zstd',
   push: true,
   v: true,
@@ -208,7 +209,7 @@ raw_cmd = {
     maintainer: 'user',
     description: 'Demo'
   },
-  "/path/to/dir": nil
+  "/path/to/dir": ()
 }
 
 p '----------------'
@@ -296,9 +297,9 @@ raw_cmd
 
 ## Nil => Raw
 
-- `{ cargo: nil, b: nil}` => `["cargo", "b"]`
-- `{ "-fv": nil}` => `["-fv"]`
-
+- `{ cargo: () }` => `["cargo"]`
+- `{ cargo: nil, b: nil }` => `["cargo", "b"]`
+- `{ "-fv": nil }` => `["-fv"]`
 
 ## Changelog
 
