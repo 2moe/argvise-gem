@@ -158,8 +158,8 @@ gem install argvise
 require 'argvise'
 
 raw_cmd_hash = {
-  docker: nil,  #=> docker
-  build: nil,
+  docker: (),  #=> docker
+  build: (),
   push: true, #=> --push
   tag: ["ghcr.io/[user]/repo:latest", "ghcr.io/[user]/repo:v0.0.1"], #=> --tag ghcr... --tag ghcr..0.0.1
   platform: "wasi/wasm", #=> --platform wasi/wasm
@@ -168,7 +168,7 @@ raw_cmd_hash = {
     description: "A Docker build example"
   }, # => --label maintainer=user --label description=A..example
   file: "wasi.dockerfile",
-  path: nil,
+  path: (),
 }
 
 Argvise.build(raw_cmd_hash)
