@@ -251,13 +251,13 @@ raw_cmd
 
 - `{ verbose: true }` => `["--verbose"]`
 - `{ v: true }` => `["-v"]`
-- `{ v: false }` => `[]` #no argument generated
+- `{ v: false }` => `[]`
 
 #### BSD style
 
 - `{ verbose: true }` => `["-verbose"]`
 - `{ v: true }` => `["-v"]`
-- `{ v: false }` => `[]` #no argument generated
+- `{ v: false }` => `[]`
 
 ### String
 
