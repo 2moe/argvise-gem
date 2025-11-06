@@ -254,7 +254,7 @@ class Argvise
 end
 
 class ::Hash # rubocop:disable Style/Documentation
-  # A convenient lambda method: converts a hash into command-line arguments
+  # Converts a hash into command-line arguments
   #
   # == Example：
   #
