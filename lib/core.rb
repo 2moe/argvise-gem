@@ -19,9 +19,9 @@
 #
 # === GNU Style:
 #   - Boolean values:
-#     - `{ verbose: true }` => "--verbose"
-#     - `{ v: true }` => "-v"
-#     - `{ v: false }` => no argument generated
+#     - `{ verbose: true }` => ["--verbose"]
+#     - `{ v: true }` => ["-v"]
+#     - `{ v: false }` => [] #no argument generated
 #   - String values:
 #     - `{ f: "a.txt" }` => ["-f", "a.txt"]
 #     - `{ file: "a.txt" }` => ["--file", "a.txt"]
@@ -34,9 +34,9 @@
 #
 # === BSD Style:
 #   - Boolean values:
-#     - `{ verbose: true }` => "-verbose"
-#     - `{ v: true }` => "-v"
-#     - `{ v: false }` => no argument generated
+#     - `{ verbose: true }` => ["-verbose"]
+#     - `{ v: true }` => ["-v"]
+#     - `{ v: false }` => [] #no argument generated
 #   - String values:
 #     - `{ f: "a.txt" }` => ["-f", "a.txt"]
 #     - `{ file: "a.txt" }` => ["-file", "a.txt"]
