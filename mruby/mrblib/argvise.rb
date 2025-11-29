@@ -1,1 +1,1 @@
-../../lib/core.rb
+../../lib/argvise/core.rb

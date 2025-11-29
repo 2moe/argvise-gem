@@ -277,6 +277,6 @@ class ::Hash # rubocop:disable Style/Documentation
   #
   # sig { params(opts: T.nilable(Hash)).returns(T::Array[String]) }
   def to_argv(opts = nil)
-    Argvise.build(self, opts: opts)
+    Argvise.build(self, opts:)
   end
 end

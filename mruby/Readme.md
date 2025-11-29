@@ -27,7 +27,7 @@ require 'open-uri'
 require 'fileutils'
 require 'pathname'
 
-git_tag = 'v0.0.7'
+git_tag = 'v0.0.8'
 url = "https://github.com/2moe/argvise-gem/archive/refs/tags/#{git_tag}.tar.gz"
 
 target_dir = Pathname 'build/tmp/argvise'
@@ -45,7 +45,7 @@ Dir.chdir target_dir do |_|
 
   file = 'mrblib/argvise.rb'
   File.delete file
-  FileUtils.cp '../lib/core.rb', file
+  FileUtils.cp '../lib/argvise/core.rb', file
 end
 ```
 
