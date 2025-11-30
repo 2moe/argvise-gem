@@ -11,7 +11,7 @@ To include the argvise gem in your mruby build, modify your build configuration 
 #
 MRuby::Build.new do |conf|
   # ...
-  conf.gem github: '2moe/argvise-gem', branch: 'main', path: 'mruby', checksum_hash: 'c6cf72f91c726079e3346ea242ea9271d67f6b20'
+  conf.gem github: '2moe/argvise-gem', branch: 'main', path: 'mruby', checksum_hash: 'ffb8edf6989acde307117a0c5a8c411ff8c1cf77'
   # ...
 end
 ```
@@ -27,7 +27,7 @@ require 'open-uri'
 require 'fileutils'
 require 'pathname'
 
-git_tag = 'v0.0.8'
+git_tag = 'v0.0.9'
 url = "https://github.com/2moe/argvise-gem/archive/refs/tags/#{git_tag}.tar.gz"
 
 target_dir = Pathname 'build/tmp/argvise'
