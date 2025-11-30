@@ -21,7 +21,7 @@ class Argvise
   #         puts({ target: "wasm32-wasip2" }.to_argv_bsd)
   #           # => ["-target", "wasm32-wasip2"]
   #
-  #         {}.respond_to?(:to_argv) #=> true
+  #         puts({}.respond_to?(:to_argv)) #=> true
   #       end
   #     end
   #

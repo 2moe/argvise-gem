@@ -12,18 +12,22 @@ Lint/EmptyExpression:
 
 # https://docs.rubocop.org/rubocop/cops_style.html
 Style/TrailingCommaInHashLiteral:
-  EnforcedStyle: diff_comma
+  EnforcedStyleForMultiline: diff_comma
 Style/TrailingCommaInArrayLiteral:
-  EnforcedStyle: diff_comma
+  EnforcedStyleForMultiline: diff_comma
 Style/Lambda:
   EnforcedStyle: literal
 Style/ModuleFunction:
   # EnforcedStyle: extend_self
   EnforcedStyle: module_function
 Style/BlockDelimiters:
-  Enabled: false
+  EnforcedStyle: braces_for_chaining
 Style/Documentation:
   Enabled: false
+
+# https://docs.rubocop.org/rubocop/cops_metrics.html
+Metrics/MethodLength:
+  Max: 15
 
 # https://docs.rubocop.org/rubocop/cops_layout.html
 Layout/CaseIndentation:
