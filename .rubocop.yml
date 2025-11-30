@@ -18,7 +18,8 @@ Style/TrailingCommaInArrayLiteral:
 Style/Lambda:
   EnforcedStyle: literal
 Style/ModuleFunction:
-  EnforcedStyle: extend_self
+  # EnforcedStyle: extend_self
+  EnforcedStyle: module_function
 Style/BlockDelimiters:
   Enabled: false
 Style/Documentation:

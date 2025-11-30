@@ -11,7 +11,7 @@ To include the argvise gem in your mruby build, modify your build configuration 
 #
 MRuby::Build.new do |conf|
   # ...
-  conf.gem github: '2moe/argvise-gem', branch: 'main', path: 'mruby', checksum_hash: 'ffb8edf6989acde307117a0c5a8c411ff8c1cf77'
+  conf.gem github: '2moe/argvise-gem', branch: 'main', path: 'mruby', checksum_hash: '0d3594559de657825888d4c320ea946dfc198704'
   # ...
 end
 ```
@@ -74,6 +74,8 @@ end
 2. **try running**
 
 ```ruby
+include Argvise::HashMixin
+
 {tag: %w[v0 beta]}.to_argv
 #=> ["--tag", "v0", "--tag", "beta"]
 
