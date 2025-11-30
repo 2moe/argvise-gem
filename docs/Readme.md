@@ -23,6 +23,9 @@ raw_cmd_hash = {
   cargo: (), b: (), r: true, target: "wasm32-wasip2"
 }
 
+using Argvise::HashRefin
+  # OR: include Argvise::HashMixin
+
 raw_cmd_hash
   .to_argv
   # .to_argv({bsd_style: false, kebab_case_flags: true})
@@ -183,16 +186,57 @@ Argvise.build(raw_cmd_hash)
 
 ### Shortcut
 
+#### Mixin
+
 ```ruby
-{ v: true, dir: '/path/to/dir' }.to_argv
-# => ["-v", "--dir", "/path/to/dir"]
+require 'argvise'
+
+module A
+  module_function
+  include Argvise::HashMixin
+
+  def demo
+    { path: '/path/to/dir' }.to_argv.then { p it }
+    #=> ["--path", "/path/to/dir"]
+
+    { path: '/path/to/dir' }.to_argv_bsd.then { p it }
+    #=> ["-path", "/path/to/dir"]
+  end
+end
+
+A.demo
+Hash.method_defined?(:to_argv) # => true
+{}.respond_to?(:to_argv) #=> true
+```
+
+#### Refinement
+
+```ruby
+require 'argvise'
+class A
+  using Argvise::HashRefin
+
+  def self.demo
+    { target: "wasm32-wasip2" }.to_argv.then { p it }
+      # => ["--target", "wasm32-wasip2"]
+
+    { target: "wasm32-wasip2" }.to_argv_bsd.then { p it }
+      # => ["-target", "wasm32-wasip2"]
+
+    {}.respond_to?(:to_argv).then { p it } #=> true
+  end
+end
+
+A.demo
+Hash.method_defined?(:to_argv) # => false
+{}.respond_to?(:to_argv) #=> false
 ```
 
 ### Configurable builder
 
 > Required
 >
-> - argvise: >= v0.0.6
+> - argvise: >= v0.0.9
 > - ruby: >= v3.1.0
 
 ```ruby
@@ -225,6 +269,10 @@ raw_cmd
 #=> ["compiler", "build", "--pack_type", "tar+zstd", "--push", "-v", "-f", "p2", "--tag", "v0.0.1", "--tag", "beta", "--platform", "wasi/wasm", "--label", "maintainer=user", "--label", "description=Demo", "/path/to/dir"]
 
 p '----------------'
+
+# argvise: >= v0.0.9
+using Argvise::HashRefin
+
 p 'GNU-style + kebab-case-flags=true'
 # argvise: >= v0.0.6
 raw_cmd
@@ -235,15 +283,13 @@ raw_cmd
 
 p '----------------'
 p 'BSD-style + kebab-case-flags=true'
-# argvise: >= v0.0.4
+# argvise: >= v0.0.9
 raw_cmd
-  .then(&Argvise.new_proc)
-  .with_bsd_style
-  .with_kebab_case_flags
-  .build
+  .to_argv_bsd
   .display
 
 #=> ["compiler", "build", "-pack-type", "tar+zstd", "-push", "-v", "-f", "p2", "-tag", "v0.0.1", "-tag", "beta", "-platform", "wasi/wasm", "-label", "maintainer=user", "-label", "description=Demo", "/path/to/dir"]
+p '----------------'
 ```
 
 ## Data Type
@@ -302,15 +348,27 @@ raw_cmd
 
 - `{ cargo: () }` => `["cargo"]`
 - `{ cargo: nil, b: nil }` => `["cargo", "b"]`
-- `{ "-fv": nil }` => `["-fv"]`
+- `{ "-fv": () }` => `["-fv"]`
 
 ## Changelog
 
 ### v0.0.6 (2025-11-05)
 
-Breaking Changes:
+Breaking Change:
 
 - `cmd_hash |> hash_to_argv` => `cmd_hash.to_argv(opts)`
-  - i.e.,
-    - old: `{a: true}.then(&hash_to_argv)`
-    - new: `{a: true}.to_argv`
+  - Previous: `{a: true}.then(&hash_to_argv)`
+  - Current: `{a: true}.to_argv`
+
+### v0.0.9 (2025-11-30)
+
+- add refinements for Hash
+- add `Hash#to_argv_bsd`
+
+Breaking Change:
+  - Mitigated side effects introduced by monkey patching.
+    - Previous:
+      - Simply calling `require 'argvise'` was enough to import `Hash#to_argv`;
+      - no explicit `include` or `using` was required.
+    - Current:
+      - We must manually `include Argvise::HashMixin` or `using Argvise::HashRefin` to import `Hash#to_argv`.

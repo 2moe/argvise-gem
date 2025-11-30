@@ -44,6 +44,7 @@ raw_cmd
 puts_division_line
 # -----------
 
+using Argvise::HashRefin
 puts 'GNU-style + kebab_case_flags(true)'
 raw_cmd
   .to_argv

@@ -6,7 +6,7 @@ class Argvise
   class << self
     sig do
       params(
-        raw_cmd_hash: Hash,
+        raw_cmd_hash: T.any(Hash, HashExt),
         opts: T.nilable(T::Hash[Symbol, T::Boolean])
       ).returns(T::Array[String])
     end
@@ -15,7 +15,7 @@ class Argvise
 
   sig do
     params(
-      raw_cmd_hash: Hash,
+      raw_cmd_hash: T.any(Hash, HashExt),
       opts: T.nilable(T::Hash[Symbol, T::Boolean])
     ).void
   end
@@ -34,4 +34,7 @@ end
 class ::Hash
   sig { params(opts: T.nilable(Hash)).returns(T::Array[String]) }
   def to_argv(opts = nil); end
+
+  sig { params(options: Hash).returns(T::Array[String]) }
+  def to_argv_bsd(options = {}); end
 end

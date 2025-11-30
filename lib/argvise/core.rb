@@ -216,21 +216,21 @@ class Argvise
   # Generates the corresponding argument array based on the value type
   def generate_args(flag, value)
     case value
-    when true
-      [flag]
-    when Array
-      expand_array(flag, value)
-    when Hash
-      expand_hash(flag, value)
-    else
-      # e.g., {tag: 'uuu'} => ["--tag", "uuu"]
-      [flag, value.to_s]
+      when true
+        [flag]
+      when Array
+        expand_array(flag, value)
+      when Hash
+        expand_hash(flag, value)
+      else
+        # e.g., {tag: 'uuu'} => ["--tag", "uuu"]
+        [flag, value.to_s]
     end
   end
 
-  # {tag: ["v1", "v2"]}
-  #   => (flag: "--tag", array: ['v1', 'v2'])
-  #   =>  ["--tag", "v1", "--tag", "v2"]
+  #     {tag: ["v1", "v2"]}
+  #       => (flag: "--tag", array: ['v1', 'v2'])
+  #       =>  ["--tag", "v1", "--tag", "v2"]
   def expand_array(flag, array)
     # FP style: array.flat_map { |v| [flag, v.to_s] }
     array.each_with_object([]) do |v, memo|
@@ -241,9 +241,9 @@ class Argvise
 
   # Processes hash values (generates key=value format)
   #
-  # {label: { env: "test", key: "value" }}
-  #   => (flag: "--label", hash)
-  #   => ["--label", "env=test", "--label", "key=value"]
+  #     {label: { env: "test", key: "value" }}
+  #       => (flag: "--label", hash)
+  #       => ["--label", "env=test", "--label", "key=value"]
   def expand_hash(flag, hash)
     # hash.flat_map { |k, v| [flag, "#{k}=#{v}"] }
     hash.each_with_object([]) do |(k, v), memo|
@@ -253,30 +253,80 @@ class Argvise
   end
 end
 
-class ::Hash # rubocop:disable Style/Documentation
-  # Converts a hash into command-line arguments
+class Argvise
+  module HashExt # rubocop:disable Style/Documentation
+    # Converts a hash map into GNU-style command-line arguments.
+    #
+    # == Example：
+    #
+    #     require 'argvise'
+    #     using Argvise::HashRefin
+    #
+    #     { v: true, path: '/path/to/dir' }.to_argv
+    #     #=> ["-v", "--path", "/path/to/dir"]
+    #
+    # == params:
+    #
+    # - opts: See also [Argvise::new]
+    #
+    # == raw_cmd_hash.to_argv is equivalent to:
+    #
+    #     raw_cmd_hash
+    #       .then(&Argvise.new_proc)
+    #       .with_bsd_style(false)
+    #       .with_kebab_case_flags(true)
+    #       .build
+    #
+    # ---
+    # sig { params(opts: T.nilable(Hash)).returns(T::Array[String]) }
+    def to_argv(opts = nil)
+      Argvise.build(self, opts:)
+    end
+
+    # Converts a hash map into BSD-style command-line arguments.
+    #
+    # == Example：
+    #
+    #     require 'argvise'
+    #     using Argvise::HashRefin
+    #
+    #     { path: '/path/to/dir' }.to_argv_bsd
+    #     #=> ["-path", "/path/to/dir"]
+    #
+    def to_argv_bsd(options = {})
+      # if options is not Hash Type => {}
+      options = {} unless options.is_a?(::Hash)
+
+      opts = options.merge({ bsd_style: true })
+      Argvise.build(self, opts:)
+    end
+  end
+
+  # Converts a hash map into command-line arguments.
   #
   # == Example：
   #
-  #   { v: true, path: '/path/to/dir' }.to_argv
-  #   #=> ["-v", "--path", "/path/to/dir"]
+  #     require 'argvise'
   #
-  # == params:
+  #     module A
+  #       module_function
+  #       include Argvise::HashMixin
   #
-  # - opts: See also [Argvise::new]
+  #       def demo
+  #         puts({ path: '/path/to/dir' }.to_argv)
+  #         #=> ["--path", "/path/to/dir"]
   #
-  # == raw_cmd_hash.to_argv is equivalent to:
+  #         puts({ path: '/path/to/dir' }.to_argv_bsd)
+  #         #=> ["-path", "/path/to/dir"]
+  #       end
+  #     end
   #
-  #  raw_cmd_hash
-  #    .then(&Argvise.new_proc)
-  #    .with_bsd_style(false)
-  #    .with_kebab_case_flags(true)
-  #    .build
-  #
-  # ---
-  #
-  # sig { params(opts: T.nilable(Hash)).returns(T::Array[String]) }
-  def to_argv(opts = nil)
-    Argvise.build(self, opts:)
+  #     A.demo
+  #     Hash.method_defined?(:to_argv) # => true
+  #     {}.respond_to?(:to_argv) #=> true
+  module HashMixin
+    def self.included(_host)
+      ::Hash.include(HashExt)
+    end
   end
 end
