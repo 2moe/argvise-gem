@@ -1,21 +1,20 @@
 /*
-.bundle/
-.yardoc
-_yardoc/
-coverage/
-# /doc/
-# /pkg/
-/spec/reports/
 tmp
-tmp.d*
+_tmp.*
+_tmp_*
+
+.directory
+.thumbnails*
 .DS_Store
+._.DS_Store
+desktop.ini
 Thumbs.db
 Thumbs.db:encryptable
-desktop.ini
-bin/srb*
+
+/bin/tapioca
+/bin/srb*
 
 # white list
-!/rbi
 # !/Gemfile
 !/Rakefile
 !/.git*
@@ -23,8 +22,10 @@ bin/srb*
 !/docs
 !/lib
 !/*.gemspec
+!/.rubocop.yml
+!/.yardopts
 !/test
 !/bin
-!/assets
-!/.rubocop.yml
 !/mruby
+!/rbi
+!/misc

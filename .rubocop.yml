@@ -24,6 +24,8 @@ Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
 Style/Documentation:
   Enabled: false
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
 
 # https://docs.rubocop.org/rubocop/cops_metrics.html
 Metrics/MethodLength:
@@ -34,4 +36,10 @@ Layout/CaseIndentation:
   EnforcedStyle: end
   IndentOneStep: true
 Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented_relative_to_receiver
+  EnforcedStyle: indented
+
+
+Naming/AsciiIdentifiers:
+  # AsciiConstants: false
+  Enabled: false
+

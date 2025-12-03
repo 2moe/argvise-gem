@@ -8,6 +8,12 @@ A Ruby gem for converting hash structures into command-line argument arrays.
 
 > **Note:** This is *not* a command-line parser — quite the opposite. Argvise helps you **build** CLI commands programmatically.
 
+## API DOC
+
+![ClassDiagram](../misc/assets/svg/ClassDiagram.svg)
+
+- Github Pages: <https://2moe.github.io/argvise-gem>
+
 ## Quick Start
 
 ```ruby

@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   # spec.version = '0.0.1'
   spec.version = Argvise::VERSION
   spec.authors = ['2moe']
-  spec.email = ['m@tmoe.me']
+  # spec.email = []
 
   spec.summary = 'Converts a hash into CLI arguments [Array]'
   spec.description = 'Provides flexible command-line argument generation with support for complex data structures'
@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
 
   spec.homepage = 'https://github.com/2moe/argvise-gem'
   spec.metadata['homepage_uri'] = spec.homepage
+  spec.metadata['documentation_uri'] = 'https://2moe.github.io/argvise-gem/'
   # spec.metadata['source_code_uri'] = spec.homepage
   # spec.metadata['changelog_uri'] = "TODO: Put your gem's CHANGELOG.md URL here."
 
@@ -28,9 +29,12 @@ Gem::Specification.new do |spec|
     ls.readlines("\x0", chomp: true).reject do |f|
       (f == gemspec) ||
         f.start_with?(
-          # bin/ test/ Gemfile Rakefile assets docs/Readme-zh-
+          # assets docs/Readme-zh-
           *%w[
-            mruby/ spec/ features/ .git .github appveyor
+            bin/ test/ spec/ features/ .git .github appveyor
+            Gemfile Rakefile
+            misc/
+            mruby
           ]
         )
     end
