@@ -10,11 +10,11 @@
 # ------------------------
 require_relative 'cd_parent_dir'
 
-require './lib/argvise'
-require 'sinlog'
+require 'argvise'
 require 'cinnabar'
 require 'mkmf'
-require 'open3'
+require 'sinlog'
+require 'fileutils'
 
 using Sinlog::Refin
 using Argvise::HashRefin
@@ -34,21 +34,16 @@ def run_yard_graph # rubocop:disable Metrics/MethodLength
     # exclude: [''],
   }
     .to_argv
-    .run
+    .run_cmd
 
-  out, status = {
+  {
     yard: (),
     graph: (),
     full: true,
     dependencies: true,
   }
     .to_argv
-    .tap(&:log_dbg)
-    .then { Open3.capture2(*_1) }
-
-  raise 'Failed to run `yard graph`' unless status.success?
-
-  out
+    .run
 end
 
 # Build a callable that runs Graphviz `dot` to render SVG from DOT source.
@@ -57,16 +52,19 @@ end
 #
 # @return [::Proc] `.call(dot_source = String)` => nil
 def proc_run_dot
-  ->(dot_source) do
+  ->(stdin_data) do
     'print dot_source | dot -Tsvg -o ClassDiagram.svg'.log_dbg
+    svg_file =
+      'misc/assets/svg/ClassDiagram.svg'
+        .tap { FileUtils.mkdir_p File.dirname(_1) }
+
     {
       dot: (),
       T: 'svg',
-      o: 'misc/assets/svg/ClassDiagram.svg',
+      o: svg_file,
     }
       .to_argv_bsd
-      .then { Open3.capture2(*_1, stdin_data: dot_source) }
-      .then { |_, status| raise 'Failed to run `dot -Tsvg`' unless status.success? }
+      .run(opts: { stdin_data: }) #=> stdout_data
   end
 end
 

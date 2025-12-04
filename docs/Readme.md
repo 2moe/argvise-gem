@@ -21,6 +21,8 @@ A Ruby gem for converting hash structures into command-line argument arrays.
 system "gem install argvise"
 ```
 
+### `Hash#to_argv`
+
 ```ruby
 # RUBY
 require 'argvise'
@@ -49,35 +51,33 @@ raw_cmd_hash
   .build
 ```
 
-## Installation
-
-### Ruby MRI
-
-Add this line to your application's Gemfile:
+### `Hash#to_argv_bsd`
 
 ```ruby
-# Gemfile
-#
-gem 'argvise'
+require 'argvise'
+using Argvise::HashRefin
+
+accel = %w[kvm hvf whpx].join ':'
+
+{
+  'qemu-system-aarch64': (),
+  machine: "none,accel=#{accel}",
+  cpu: 'host',
+  display: 'none',
+  nodefaults: true,
+  no_user_config: true,
+  qmp: 'stdio',
+}.to_argv_bsd
+# => ["qemu-system-aarch64",
+#   "-machine", "none,accel=kvm:hvf:whpx",
+#   "-cpu", "host",
+#   "-display", "none",
+#   "-nodefaults",
+#   "-no-user-config",
+#   "-qmp", "stdio"]
 ```
 
-And then execute:
-
-```sh
-# SHELL
-#
-bundler install
-```
-
-Or install it directly:
-
-```sh
-# SHELL
-#
-gem install argvise
-```
-
-### mruby
+## mruby
 
 [More details](../mruby/Readme.md)
 
