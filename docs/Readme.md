@@ -27,12 +27,12 @@ system "gem install argvise"
 # RUBY
 require 'argvise'
 
+using Argvise::HashRefin
+  # OR: include Argvise::HashMixin
+
 raw_cmd_hash = {
   cargo: (), b: (), r: true, target: "wasm32-wasip2"
 }
-
-using Argvise::HashRefin
-  # OR: include Argvise::HashMixin
 
 raw_cmd_hash
   .to_argv
