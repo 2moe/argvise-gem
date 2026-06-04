@@ -1,5 +1,6 @@
 /*
-tmp
+tmp/
+_tmp/
 _tmp.*
 _tmp_*
 
@@ -14,8 +15,8 @@ Thumbs.db:encryptable
 /bin/tapioca
 /bin/srb*
 
-# white list
-# !/Gemfile
+# allow list
+!/Gemfile
 !/Rakefile
 !/.git*
 !/License
